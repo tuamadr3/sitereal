@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prodotti MAS - CM Marangoni Srl</title>
+
+    <style>
+        /* ============================================= */
+        /* === STILI GLOBALI E COMPONENTI COMUNI     === */
+        /* ============================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            color: #1d1d1f;
+            background-color: #fff;
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGAZIONE --- */
+        .main-nav {
+            position: sticky; top: 0;
+            width: 100%; height: 80px;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+        }
+        .nav-container {
+            height: 100%; max-width: 1280px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+        }
+        .logo img { height: 50px; }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #333; font-weight: 500; padding: 8px 0; position: relative; transition: color 0.3s ease; font-size: 1.1em; }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background-color: #0071e3; transition: width 0.3s ease; }
+        .nav-links a:hover { color: #0071e3; }
+        .nav-links a.active { color: #0071e3; font-weight: 600; }
+        .nav-links a.active::after, .nav-links a:hover::after { width: 100%; }
+        .nav-toggle { display: none; }
+
+        /* === STILI PAGINA CATALOGO === */
+        main { width: 100%; }
+        .page-intro {
+            text-align: center;
+            padding: 100px 20px 80px;
+            background-color: #f5f5f7;
+        }
+        .page-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6e6e73;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .page-subtitle {
+            font-size: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .partner-logo-intro {
+            max-height: 50px;
+            margin-bottom: 30px;
+        }
+
+        .product-catalog {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 40px;
+            color: #0071e3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .product-grid-card {
+            display: flex; flex-direction: column;
+            text-decoration: none; color: inherit;
+            background-color: #f5f5f7;
+            border-radius: 18px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; transform: translateY(30px);
+        }
+        .product-grid-card.is-visible {
+            opacity: 1; transform: translateY(0);
+            transition-delay: calc(var(--card-index) * 50ms);
+        }
+        .product-grid-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        /* === STILI MINI-SLIDER === */
+        .grid-card-image {
+            position: relative; overflow: hidden;
+            width: 100%; height: 220px;
+        }
+        .mini-slider-track {
+            display: flex; height: 100%;
+            transition: transform 0.4s ease;
+        }
+        .mini-slider-track img {
+            width: 100%; height: 100%;
+            object-fit: cover; flex-shrink: 0;
+        }
+        .mini-slider-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(30, 30, 30, 0.5); color: white;
+            border: none; border-radius: 50%;
+            width: 32px; height: 32px;
+            cursor: pointer; z-index: 1;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .grid-card-image:hover .mini-slider-arrow { opacity: 1; }
+        .mini-slider-arrow.prev { left: 10px; }
+        .mini-slider-arrow.next { right: 10px; }
+        .mini-slider-arrow:hover { background: rgba(0, 0, 0, 0.7); }
+
+        .grid-card-content { padding: 25px; flex-grow: 1; }
+        .grid-card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; }
+        .grid-card-description { font-size: 0.95rem; color: #6e6e73; }
+
+        /* === FOOTER === */
+        footer {
+            background-color: #e5e5e5; padding: 40px 20px;
+            font-size: 0.9em; color: #6e6e73;
+            text-align: center;
+        }
+
+        /* === MEDIA QUERIES === */
+        @media (max-width: 900px) {
+            .page-subtitle { font-size: 2.5rem; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-toggle { display: block; background: none; border: none; cursor: pointer; z-index: 1001; }
+            .hamburger-bar { display: block; width: 22px; height: 2px; background-color: #333; margin: 5px 0; }
+            .page-title { font-size: 0.9rem; }
+            .page-subtitle { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="image-removebg-preview.png" alt="CM Marangoni Logo">
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="storia.html">Storia</a></li>
+                <li><a href="prodotti.html">Prodotti</a></li>
+                <li><a href="partner.html" class="active">Partner</a></li>
+                <li><a href="contatti.html">Contatti</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span class="hamburger-bar"></span><span class="hamburger-bar"></span><span class="hamburger-bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-intro">
+            <h1 class="page-title">Catalogo Prodotti</h1>
+            <img src="https://www.cmmarangoni.com/wp-content/uploads/2021/04/mas-logo-300x71.png" alt="Logo MAS" class="partner-logo-intro">
+            <h2 class="page-subtitle">Torni e Rettifiche ad Alta Produttività.</h2>
+        </div>
+
+        <div class="product-catalog">
+            <a href="partner.html" class="back-link">&larr; Torna a tutti i partner</a>
+            <div class="product-grid">
+                <!-- Card 1 -->
+                <a href="#" class="product-grid-card">
+                    <div class="grid-card-image">
+                        <div class="mini-slider-track">
+                            <img src="https://www.cmmarangoni.com/wp-content/uploads/2021/04/Torni-Plurimandrino.jpeg" alt="Torni Plurimandrino 1">
+                            <img src="https://images.unsplash.com/photo-1549925243-99c859d33b47?w=800" alt="Dettaglio Plurimandrino">
+                        </div>
+                        <button class="mini-slider-arrow prev" aria-label="Precedente">&lt;</button>
+                        <button class="mini-slider-arrow next" aria-label="Successiva">&gt;</button>
+                    </div>
+                    <div class="grid-card-content">
+                        <h3 class="grid-card-title">Torni Plurimandrino</h3>
+                        <p class="grid-card-description">Soluzioni per la produzione di massa di pezzi complessi. L'impiego di più mandrini riduce drasticamente i tempi ciclo, aumentando la produttività.</p>
+                    </div>
+                </a>
+                <!-- Card 2 -->
+                <a href="#" class="product-grid-card">
+                     <div class="grid-card-image">
+                        <div class="mini-slider-track">
+                           <img src="https://www.cmmarangoni.com/wp-content/uploads/2021/04/Torni-Monomandrino-CNC.jpeg" alt="Torni Monomandrino CNC 1">
+                           <img src="https://images.unsplash.com/photo-1516594798947-7b8128c57325?w=800" alt="Dettaglio tornio">
+                        </div>
+                        <button class="mini-slider-arrow prev" aria-label="Precedente">&lt;</button>
+                        <button class="mini-slider-arrow next" aria-label="Successiva">&gt;</button>
+                    </div>
+                    <div class="grid-card-content">
+                        <h3 class="grid-card-title">Torni Monomandrino CNC</h3>
+                        <p class="grid-card-description">Macchine universali e precise per la produzione di lotti di piccole e medie dimensioni, che combinano flessibilità e alte prestazioni.</p>
+                    </div>
+                </a>
+                <!-- Card 3 -->
+                <a href="#" class="product-grid-card">
+                     <div class="grid-card-image">
+                        <div class="mini-slider-track">
+                           <img src="https://www.cmmarangoni.com/wp-content/uploads/2021/04/Rettifiche.jpeg" alt="Rettifiche 1">
+                           <img src="https://images.unsplash.com/photo-1599481358994-28b3c9b74070?w=800" alt="Dettaglio Rettifica">
+                        </div>
+                        <button class="mini-slider-arrow prev" aria-label="Precedente">&lt;</button>
+                        <button class="mini-slider-arrow next" aria-label="Successiva">&gt;</button>
+                    </div>
+                    <div class="grid-card-content">
+                        <h3 class="grid-card-title">Rettifiche</h3>
+                        <p class="grid-card-description">Macchine per operazioni di finitura di altissima precisione, in grado di garantire tolleranze micrometriche e rugosità superficiali eccellenti.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p>© 2025 CM Marangoni Srl. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedCards = document.querySelectorAll('.product-grid-card');
+            if (animatedCards.length > 0) {
+                const cardObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+                animatedCards.forEach((card, index) => {
+                    card.style.setProperty('--card-index', index);
+                    cardObserver.observe(card);
+                });
+            }
+
+            const productCards = document.querySelectorAll('.product-grid-card');
+            productCards.forEach(card => {
+                const track = card.querySelector('.mini-slider-track');
+                const slides = Array.from(track.children);
+                const nextButton = card.querySelector('.next');
+                const prevButton = card.querySelector('.prev');
+
+                if (slides.length <= 1) {
+                    if(nextButton) nextButton.style.display = 'none';
+                    if(prevButton) prevButton.style.display = 'none';
+                    return;
+                }
+
+                let currentIndex = 0;
+
+                const updateSlidePosition = () => {
+                    const slideWidth = slides[0].clientWidth;
+                    track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
+                };
+
+                nextButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateSlidePosition();
+                });
+
+                prevButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    updateSlidePosition();
+                });
+
+                new ResizeObserver(updateSlidePosition).observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
