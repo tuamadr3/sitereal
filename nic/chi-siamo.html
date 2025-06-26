@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contatti - CM Marangoni Srl</title>
+    
+    <style>
+        /* ============================================= */
+        /* === STILI GLOBALI E COMPONENTI COMUNI     === */
+        /* ============================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            color: #1d1d1f;
+            background-color: #f5f5f7;
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGAZIONE --- */
+        .main-nav {
+            position: sticky; top: 0;
+            width: 100%; height: 80px;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+        }
+        .nav-container {
+            height: 100%; max-width: 1280px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+        }
+        .logo img { height: 50px; }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #333; font-weight: 500; padding: 8px 0; position: relative; transition: color 0.3s ease; font-size: 1.1em; }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background-color: #0071e3; transition: width 0.3s ease; }
+        .nav-links a:hover { color: #0071e3; }
+        .nav-links a.active { color: #0071e3; font-weight: 600; }
+        .nav-links a.active::after, .nav-links a:hover::after { width: 100%; }
+        .nav-toggle { display: none; }
+
+        /* === STILI GENERICI PAGINA === */
+        main { width: 100%; }
+        .page-intro { text-align: center; padding: 100px 20px 60px; }
+        .page-title { font-size: 3.5rem; font-weight: 700; margin-bottom: 20px; }
+        .page-subtitle { font-size: 1.5rem; max-width: 700px; margin: 0 auto; color: #6e6e73; line-height: 1.5; }
+
+        .content-section {
+            padding: 80px 20px;
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .content-section.is-visible { opacity: 1; transform: translateY(0); }
+        .content-section:nth-child(odd) { background-color: #ffffff; }
+        .section-container { max-width: 1280px; margin: 0 auto; }
+        .section-title { font-size: 2.8rem; font-weight: 600; margin-bottom: 50px; text-align: center; }
+
+        /* ======================================================= */
+        /* === STILI SEZIONE CONTATTI E MAPPA                  === */
+        /* ======================================================= */
+        .contact-layout {
+            display: flex;
+            align-items: flex-start;
+            gap: 60px;
+        }
+        .contact-details { flex: 1; }
+        .contact-details h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #0071e3;
+        }
+        .contact-details address {
+            font-style: normal;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .contact-details address a {
+            color: #1d1d1f;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .contact-details address a:hover { color: #0071e3; }
+        
+        .map-container {
+            flex: 1.5;
+            height: 450px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        
+        /* ======================================================= */
+        /* === STILI SEZIONE FONDATORI (TEAM)                  === */
+        /* ======================================================= */
+        .founders-container { display: flex; flex-direction: column; align-items: center; gap: 40px; }
+        .founders-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; width: 100%; }
+        .founder-card {
+            background: #fff; border: 1px solid #e5e5e5;
+            border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 30px 20px; text-align: center;
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.3s ease;
+        }
+        .founder-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        .founders-row.top .founder-card { flex: 1 1 30%; max-width: 350px; }
+        .founders-row.bottom .founder-card { flex: 1 1 40%; max-width: 300px; }
+        .founder-photo { width: 120px; height: 120px; border-radius: 50%; background-color: #e9ecef; margin-bottom: 20px; }
+        .founder-card h3 { font-size: 1.5em; margin-bottom: 10px; }
+        .founder-card p { font-size: 0.95em; line-height: 1.6; color: #6e6e73; }
+        
+        /* === FOOTER === */
+        footer {
+            background-color: #e5e5e5;
+            padding: 30px 20px;
+            font-size: 0.9em;
+            color: #6e6e73;
+            text-align: center;
+        }
+
+        /* === MEDIA QUERIES === */
+        @media (max-width: 900px) {
+            .contact-layout { flex-direction: column; }
+            .founders-row { flex-direction: column; align-items: center; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-toggle { display: block; background: none; border: none; cursor: pointer; z-index: 1001; }
+            .hamburger-bar { display: block; width: 22px; height: 2px; background-color: #333; margin: 5px 0; transition: all 0.3s; }
+            .page-title, .section-title { font-size: 2.5rem; }
+            .page-subtitle { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="image-removebg-preview.png" alt="CM Marangoni Logo">
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#">Storia</a></li>
+                <li><a href="prodotti.html">Prodotti</a></li>
+                <li><a href="partner.html">Partner</a></li>
+                <li><a href="#"class="active">Contatti</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span class="hamburger-bar"></span><span class="hamburger-bar"></span><span class="hamburger-bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-intro">
+            <h1 class="page-title">Mettiti in Contatto</h1>
+            <p class="page-subtitle">Siamo qui per rispondere a ogni tua domanda. Contattaci per scoprire come possiamo aiutarti a realizzare i tuoi progetti.</p>
+        </div>
+
+        <!-- SEZIONE TEAM (FONDATORI) -->
+        <section class="content-section">
+            <div class="section-container">
+                <h2 class="section-title">Il Nostro Team</h2>
+                <div class="founders-container">
+                    <div class="founders-row top">
+                        <div class="founder-card"><div class="founder-photo"></div><h3>Cesare Marangoni</h3><p>CEO</p></div>
+                        <div class="founder-card"><div class="founder-photo"></div><h3>Mario Marangoni</h3><p>Direttore Tecnico</p></div>
+                        <div class="founder-card"><div class="founder-photo"></div><h3>Nicolò Magnabosco</h3><p>Responsabile Produzione</p></div>
+                    </div>
+                    <div class="founders-row bottom">
+                        <div class="founder-card"><div class="founder-photo"></div><h3>Laura Perinelli</h3><p>Amministrazione</p></div>
+                        <div class="founder-card"><div class="founder-photo"></div><h3>Elena Impalmi</h3><p>Ufficio Commerciale</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE CONTATTI E MAPPA -->
+        <section class="content-section">
+            <div class="section-container">
+                <div class="contact-layout">
+                    <div class="contact-details">
+                        <h3>La Nostra Sede</h3>
+                        <address>
+                            <strong>CM Marangoni Srl</strong><br>
+                            Via dell'Industria, 15<br>
+                            36057 Arcugnano (VI), Italia<br><br>
+                            <strong>Tel:</strong> <a href="tel:+390444544087">+39 0444 544087</a><br>
+                            <strong>Fax:</strong> +39 0444 288828<br>
+                            <strong>Email:</strong> <a href="mailto:info@cmmarangoni.it">info@cmmarangoni.it</a><br>
+                            <strong>PEC:</strong> <a href="mailto:cm.marangoni@pec.it">cm.marangoni@pec.it</a><br>
+                        </address>
+                    </div>
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2794.752358892468!2d11.51139451555988!3d45.5342921791028!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477f36e897931c39%3A0x6b7724128038676d!2sVia%20dell'Industria%2C%2015%2C%2036057%20Arcugnano%20VI!5e0!3m2!1sit!2sit!4v1672844812345!5m2!1sit!2sit" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer>
+        <div class="footer-container">
+            <p>© 2024 CM Marangoni Srl. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ANIMAZIONE DI ENTRATA PER LE SEZIONI ---
+            const sections = document.querySelectorAll('.content-section');
+            if (sections.length > 0) {
+                const sectionObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { 
+                    threshold: 0.1,
+                    rootMargin: "0px 0px -50px 0px"
+                });
+                sections.forEach(section => sectionObserver.observe(section));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Nostri Partner - CM Marangoni Srl</title>
+    
+    <style>
+        /* ============================================= */
+        /* === STILI GLOBALI E COMPONENTI COMUNI     === */
+        /* ============================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            color: #1d1d1f;
+            background-color: #fff; /* Sfondo bianco pulito */
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGAZIONE --- */
+        .main-nav {
+            position: sticky; top: 0;
+            width: 100%; height: 80px;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+        }
+        .nav-container {
+            height: 100%; max-width: 1280px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+        }
+        .logo img { height: 50px; }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #333; font-weight: 500; padding: 8px 0; position: relative; transition: color 0.3s ease; font-size: 1.1em; }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background-color: #0071e3; transition: width 0.3s ease; }
+        .nav-links a:hover { color: #0071e3; }
+        .nav-links a.active { color: #0071e3; font-weight: 600; }
+        .nav-links a.active::after, .nav-links a:hover::after { width: 100%; }
+        .nav-toggle { display: none; }
+
+        /* === STILI SPECIFICI PAGINA PARTNER === */
+        main { width: 100%; }
+        .page-intro {
+            text-align: center;
+            padding: 100px 20px 80px;
+            background-color: #f5f5f7;
+        }
+        .page-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6e6e73;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .page-subtitle {
+            font-size: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .section-title-custom {
+            font-size: 2.5rem;
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .partner-grid-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+        .partner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+        
+        .partner-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            background-color: #f5f5f7;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out, box-shadow 0.3s ease;
+        }
+        .partner-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .partner-card:hover {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            transform: translateY(-5px);
+        }
+        
+        .partner-logo-container {
+            height: 80px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .partner-logo-container img {
+            max-height: 100%;
+            max-width: 200px;
+            height: auto;
+        }
+
+        .partner-name {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .partner-description {
+            font-size: 1rem;
+            color: #6e6e73;
+            line-height: 1.6;
+        }
+
+        /* === STILI PER LA GRIGLIA SPONSOR === */
+        .sponsor-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+        }
+        .sponsor-grid .partner-card.wide-card {
+            grid-column: span 2;
+        }
+        
+        .rounded-background {
+            background-color: #f5f5f7;
+            border-radius: 30px;
+        }
+
+        /* === FOOTER === */
+        footer {
+            background-color: #fff;
+            padding: 40px 20px;
+            font-size: 0.9em;
+            color: #6e6e73;
+            text-align: center;
+            border-top: 1px solid #e5e5e5;
+        }
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        
+        /* === MEDIA QUERIES (RESPONSIVE) === */
+        @media (max-width: 1024px) {
+            .sponsor-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 900px) {
+            .page-subtitle { font-size: 2.5rem; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-toggle { display: block; background: none; border: none; cursor: pointer; z-index: 1001; }
+            .hamburger-bar { display: block; width: 22px; height: 2px; background-color: #333; margin: 5px 0; transition: all 0.3s; }
+            .page-title { font-size: 0.9rem; }
+            .page-subtitle { font-size: 2rem; }
+            
+            .sponsor-grid {
+                grid-template-columns: 1fr;
+            }
+            .sponsor-grid .partner-card.wide-card {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="image-removebg-preview.png" alt="CM Marangoni Logo">
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#">Storia</a></li>
+                <li><a href="prodotti.html">Prodotti</a></li>
+                <li><a href="#" class="active">Partner</a></li>
+                <li><a href="chi-siamo.html">Contatti</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span class="hamburger-bar"></span><span class="hamburger-bar"></span><span class="hamburger-bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-intro">
+            <h1 class="page-title">I Nostri Partner</h1>
+            <h2 class="page-subtitle">Collaboriamo con i leader tecnologici per offrire soluzioni integrate e all'avanguardia.</h2>
+        </div>
+
+        <!-- SEZIONE SPONSOR -->
+        <div class="partner-grid-container">
+            <h2 class="section-title-custom">Partner Principali</h2>
+            <div class="sponsor-grid">
+                <!-- Card Sponsor 1 (Larga) -->
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card wide-card">
+                    <div class="partner-logo-container">
+                        <img src="ews_logo_color.png" alt="Logo EWS">
+                    </div>
+                    <h3 class="partner-name">EWS</h3>
+                    <p class="partner-description">
+                        Leader nella produzione di portautensili di alta precisione, fissi e motorizzati, per torni a controllo numerico. La loro tecnologia garantisce massima rigidità e durata nel tempo.
+                    </p>
+                </a>
+
+                <!-- Card Sponsor 2 (Larga) -->
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card wide-card">
+                    <div class="partner-logo-container">
+                        <img src="muellerhydraulik_logo.svg" alt="Logo Muller">
+                    </div>
+                    <h3 class="partner-name">MULLER</h3>
+                    <p class="partner-description">
+                        Specialisti nello sviluppo e produzione di presse e sistemi idraulici su misura. La loro competenza si estende a soluzioni complete per la formatura, stampaggio e assemblaggio industriale.
+                    </p>
+                </a>
+                
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card">
+                    <div class="partner-logo-container"><img src="logo mas.png" alt="Logo MAS"></div>
+                    <h3 class="partner-name">MAS</h3><p class="partner-description">Produttore con una lunga tradizione nella costruzione di macchine utensili, in particolare torni e centri di lavoro, apprezzati per affidabilità e precisione.</p>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card">
+                    <div class="partner-logo-container"><img src="logo nann.jpg" alt="Logo NANN"></div>
+                    <h3 class="partner-name">NANN</h3><p class="partner-description">Specialista tedesco nella tecnologia di serraggio di alta precisione. Offre un'ampia gamma di pinze, mandrini e sistemi di serraggio personalizzati.</p>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card">
+                    <div class="partner-logo-container"><img src="logo goldenbodt.png" alt="Logo GOLTENBODT"></div>
+                    <h3 class="partner-name">GOLTENBODT</h3><p class="partner-description">Fornitore di soluzioni complete nel campo dei portautensili e dei sistemi di serraggio per ottimizzare i processi di produzione sulle macchine utensili.</p>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card">
+                    <div class="partner-logo-container"><img src="logo_mpc-removebg-preview.png" alt="Logo MPC"></div>
+                    <h3 class="partner-name">MPC</h3><p class="partner-description">Partner strategico per la fornitura di componenti meccanici di alta precisione per l'automazione e l'industria, garantendo qualità e affidabilità.</p>
+                </a>
+            </div>
+        </div>
+        
+        <!-- SEZIONE PARTNER -->
+        <div class="partner-grid-container rounded-background">
+            <h2 class="section-title-custom">Partner Tecnologici</h2>
+            <div class="partner-grid">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card">
+                    <div class="partner-logo-container"><img src="Valtec_Logo2021.png" alt="Logo Valtec"></div>
+                    <h3 class="partner-name">VALTEC SA</h3>
+                    <p class="partner-description">Azienda svizzera all'avanguardia nella progettazione di macchine speciali e soluzioni di automazione per l'industria di alta precisione, come l'orologeria e il settore medicale.</p>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card">
+                    <div class="partner-logo-container"><img src="logo cm presetting.png" alt="Logo CM Presetting"></div>
+                    <h3 class="partner-name">CM PRESETTING</h3>
+                    <p class="partner-description">La nostra divisione specializzata in banchi di presetting per utensili, essenziali per ridurre i tempi di fermo macchina e massimizzare l'efficienza produttiva dei centri di lavoro.</p>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="partner-card">
+                    <div class="partner-logo-container"><img src="cm ricambi.png" alt="Logo CM Ricambi"></div>
+                    <h3 class="partner-name">CM RICAMBI</h3>
+                    <p class="partner-description">Servizio dedicato alla fornitura rapida e affidabile di parti di ricambio originali e componenti per macchine utensili, garantendo la continuità operativa dei nostri clienti.</p>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p>© 2025 CM Marangoni Srl. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ANIMAZIONE DI ENTRATA PER LE CARD ---
+            const cards = document.querySelectorAll('.partner-card');
+            if (cards.length > 0) {
+                const cardObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { 
+                    threshold: 0.1,
+                    rootMargin: "0px 0px -50px 0px"
+                });
+                cards.forEach(card => cardObserver.observe(card));
+            }
+        });
+    </script>
+</body>
+</html>
